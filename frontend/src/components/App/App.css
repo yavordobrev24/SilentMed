@@ -1,0 +1,18 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&display=swap');
+*{
+    padding:0;
+    margin:0;
+    box-sizing: border-box;
+    font-family: 'Lato', sans-serif;
+
+}
+body{
+    background-image: linear-gradient(rgba(0, 0, 0, 0.7),
+    rgba(0, 0, 0, 0.5)), url("/background-img.webp");
+    color:white;
+    min-height:100vh;
+    backdrop-filter: blur(5px);
+}
+a:-webkit-any-link {
+    text-decoration: none;
+}

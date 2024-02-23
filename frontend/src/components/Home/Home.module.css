@@ -1,0 +1,22 @@
+.wrapper{
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    min-height:100vh;
+}
+
+.wrapper .logo{
+    width:50%;
+}
+.wrapper .logo img{
+    width:100%;
+    height:auto;
+    display: block;
+}
+.btn-wrapper{
+    display:flex;
+    flex-direction: row;
+    gap:30px;
+    padding:80px;
+}

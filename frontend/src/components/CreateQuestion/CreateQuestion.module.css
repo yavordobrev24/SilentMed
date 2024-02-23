@@ -1,0 +1,26 @@
+.create-question {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  backdrop-filter: blur(5px);
+}
+
+.question-container{
+  flex-grow: 1;
+  display: flex;
+  text-shadow: 0 3px rgb(0, 0, 0,0.2);
+  
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
+}
+.question-container .seperator{
+  width:15em;
+  height:1px;
+  background-color: white;
+}
+.question-container h2{
+  font-size: 2.5em;
+  font-weight: bold;
+}

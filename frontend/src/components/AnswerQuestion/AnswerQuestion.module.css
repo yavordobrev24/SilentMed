@@ -1,0 +1,53 @@
+.answer-question{
+    min-height:100vh;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap:20px;
+}
+
+
+.answer-question h2 {
+    font-weight: bold;
+    font-size: 50px;
+    margin-bottom: 50px;
+    margin-inline: 4em;
+    padding:0.5em;
+    text-shadow: 0 3px rgb(0, 0, 0,0.2);
+}
+
+
+.btn-group button {
+    background-color: white;
+    border: 1px solid white;
+    color: #00308F;
+    padding: 20px 30px;
+    cursor: pointer;
+    float: left;
+    font-size: 30px;
+    transition: all 0.5s;
+}
+.btn-group button:last-of-type{
+    border-radius: 0 15px 15px 0;
+}
+.btn-group button:first-of-type{
+    border-radius: 15px 0 0 15px;
+}
+
+.btn-group button:not(:last-child) {
+    border-right: none;
+}
+
+.btn-group:after {
+    content: "";
+    clear: both;
+    display: table;
+}
+
+.btn-group button.hovered {
+    color:white;
+    background-color: #00308F;
+    border-color: #00308F;
+    transform: translateY(5%);
+}
