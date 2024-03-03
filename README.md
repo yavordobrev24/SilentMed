@@ -6,6 +6,8 @@ Welcome to the SilentMed documentation. This is the application that serves as t
 
 The SilentMed consists of both frontend and cortex parts. Each part has its individual README.md file that provides specific details. Before getting started, ensure that you have the necessary credentials for the Cortex API. These credentials are already seeded.
 
+![screenshot of home page](./showcase.png)
+
 To use the Cortex part, you should have Emotiv Launcher installed and create a virtual brainwear device if you don't have a physical one. Make sure you are logged in to their website and the Emotiv Launcher.
 
 You also have to create Cortex App on the Emotiv Website after creating account/EmotivId.
