@@ -1,0 +1,60 @@
+.summary {
+  background-color: rgb(2, 41, 79);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.summary .page {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+  padding: 1em;
+  margin-bottom: 5em;
+  border-color: rgb(19, 27, 32);
+  background-color: rgba(19, 27, 32, 0.4);
+  border-radius: 8px;
+  padding: 2em;
+}
+.summary .page h2 {
+  font-size: 1.8em;
+}
+.summary .page h2::before {
+  display: block;
+  font-size: 0.5em;
+  color: rgb(148, 166, 184);
+  padding-block: 0.5em;
+  content: "question";
+}
+.summary .page p::before {
+  content: "answer";
+  font-size: 0.5em;
+  color: rgb(148, 166, 184);
+  display: block;
+  padding-block: 0.5em;
+  font-weight: bold;
+}
+.summary .page p {
+  font-size: 1.8em;
+}
+
+.summary .pagination button {
+  color: white;
+}
+.summary .actions button {
+  background-color: rgb(50, 50, 158);
+  border-radius: 10px;
+  padding: 0.5em;
+  border: none;
+  margin: 1em;
+  color: white;
+  transition: 0.3s ease;
+  cursor: pointer;
+}
+.summary .actions button:hover {
+  background-color: rgb(50, 50, 158, 0.5);
+}
+.summary .actions a {
+  color: white;
+}

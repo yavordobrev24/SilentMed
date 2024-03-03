@@ -1,7 +1,11 @@
-import { useState, ChangeEvent,useEffect } from 'react';
+import { useState, ChangeEvent, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+
 import styles from "./CreateQuestion.module.css";
-import commonStyles from "../Common.module.css";
-import { useNavigate } from 'react-router-dom';
+
+import TextField from "@mui/material/TextField";
+import SummarizeIcon from "@mui/icons-material/Summarize";
+import Tooltip from "@mui/material/Tooltip";
 
 interface Question {
   question: string;
@@ -10,48 +14,59 @@ interface Question {
 
 export default function CreateQuestion(): JSX.Element {
   const [question, setQuestion] = useState<Question>({
-    question: '',
-    answers: ['', ''],
+    question: "",
+    answers: ["", ""],
   });
-  const [count,setCount] = useState<number>(1);
+  const [canSummarize, setCanSummarize] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
-
   useEffect(() => {
-    let numberOfQuestionsString:any = sessionStorage.getItem("numQuestions");
-    numberOfQuestionsString = JSON.parse(numberOfQuestionsString);
-    if (numberOfQuestionsString-count<0) {
-      navigate("/answer-question")
-    }else{
+    let hasQuestion: string | null = sessionStorage.getItem("question");
+    if (hasQuestion) {
+      navigate("/answer-question");
+    }
+    let answeredQuestionsString = sessionStorage.getItem("answeredQuestions");
+    if (answeredQuestionsString) {
+      let answeredQuestions = JSON.parse(answeredQuestionsString);
+      if (answeredQuestions.length > 0) {
+        setCanSummarize(true);
+      } else {
+        setCanSummarize(false);
+      }
+    }
+  }, [question, error]);
+
+  const handleCreateQuestion = (question: Question) => {
+    if (
+      question.question.trim() === "" ||
+      question.answers.some((answer) => answer.trim() === "")
+    ) {
+      setError("Please fill in all input fields.");
+    } else {
+      const questionStringified: string = JSON.stringify(question);
+      sessionStorage.setItem("question", questionStringified);
+      setError(() => null);
       setQuestion({
-        question: '',
-        answers: ['', ''],
+        question: "",
+        answers: ["", ""],
       });
     }
-  }, [count]);
-
-  const handleCreateQuestion = (question:Question) => {
-    if (question.question.trim() === '' || question.answers.some(answer => answer.trim() === '')) {
-      setError('Please fill in all input fields.');
-    } else {
-      setError(null);
-    
-    const questionsString:any = sessionStorage.getItem("questions");
-    const questionsParsed = JSON.parse(questionsString);
-    questionsParsed.push(question);
-    sessionStorage.setItem("questions", JSON.stringify(questionsParsed));
-    setCount((old)=>old+1);
-   }
   };
 
   const handleQuestionChange = (e: ChangeEvent<HTMLInputElement>) => {
+    console.log(question);
+
     setQuestion({
       ...question,
       question: e.target.value,
     });
   };
 
-  const handleAnswerChange = (answerIndex: number, e: ChangeEvent<HTMLInputElement>) => {
+  const handleAnswerChange = (
+    answerIndex: number,
+    e: ChangeEvent<HTMLInputElement>
+  ) => {
+    console.log(question);
     const newAnswers = [...question.answers];
     newAnswers[answerIndex] = e.target.value;
     setQuestion({
@@ -62,112 +77,54 @@ export default function CreateQuestion(): JSX.Element {
 
   return (
     <div className={styles["create-question"]}>
-      <div className={styles["question-container"]}>
-        <h2>Question {count}</h2>
-      <div className={styles.seperator}>
-        </div>  
-        <div className={commonStyles["input-wrapper"]}>
-          <input type="text" required onChange={handleQuestionChange} value={question.question} />
-          <span>Question</span>
-        </div>
-        {question.answers.map((answer, index) => (
-          <div key={index}>
-            <div className={commonStyles["input-wrapper"]}>
-              <input type="text" required onChange={(e) => handleAnswerChange(index, e)} value={answer} />
-              <span>{`Answer ${index + 1}`}</span>
-            </div>
+      <div className={styles.content}>
+        <h2>Create question</h2>
+        <p>After which the patients can answer directly.</p>
+        <section className={styles.form}>
+          <TextField
+            id="filled-basic"
+            onChange={handleQuestionChange}
+            value={question.question}
+            label="Question"
+            className={styles.input}
+            variant="filled"
+            required
+          />
+          {question.answers.map((answer, index) => (
+            <TextField
+              key={index}
+              className={styles.input}
+              id="filled-basic"
+              label={`Answer ${index + 1}`}
+              variant="filled"
+              required
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                handleAnswerChange(index, e)
+              }
+              value={answer}
+            />
+          ))}
+          {error && <div>{error}</div>}
+          <div className={styles.btns}>
+            <button
+              className={styles["cq-btn"]}
+              onClick={() => handleCreateQuestion(question)}
+            >
+              Create
+            </button>
+            {canSummarize && (
+              <Tooltip title="Summarize">
+                <a href="/summary" className={styles.summarize}>
+                  <SummarizeIcon />
+                </a>
+              </Tooltip>
+            )}
           </div>
-        ))}
-        {error && <div className={commonStyles["error-message"]}>{error}</div>}  
-          <button className={commonStyles.btn} onClick={()=>handleCreateQuestion(question)}>
-          <span>Submit Question</span>
-        </button>
+        </section>
+      </div>
+      <div className={styles.img}>
+        <img src="/doctor.jpg" />
       </div>
     </div>
   );
 }
-/**import { useEffect, useState } from "react";
-import styles from "./AnswerQuestion.module.css";
-import { useNavigate } from "react-router-dom";
-
-interface Question {
-  question: string;
-  answers: string[];
-}
-
-interface AnsweredQuestion {
-  question: string;
-  answer: string;
-}
-
-const AnswerQuestions = () => {
-  const [questionObj, setQuestionObj] = useState<Question | null>(null);
-  const [answeredQuestions, setAnsweredQuestions] = useState<AnsweredQuestion[]>([]);
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    const storedQuestionsString = sessionStorage.getItem("questions");
-
-    if (storedQuestionsString) {
-      const storedQuestions: Question[] = JSON.parse(storedQuestionsString);
-
-      if (storedQuestions.length > 0) {
-        setQuestionObj(storedQuestions[0]); 
-      } else {
-        sessionStorage.removeItem("questions");
-        sessionStorage.setItem("answeredQuestions", JSON.stringify(answeredQuestions));
-        navigate("/answer-summary");
-      }
-    }
-  }, [answeredQuestions, navigate]);
-
-  const handleAnswerClick = (selectedAnswer: string) => {
-    if (questionObj) {
-      const answeredQuestion: AnsweredQuestion = {
-        question: questionObj.question,
-        answer: selectedAnswer,
-      };
-      const storedQuestionsString = sessionStorage.getItem("questions");
-      if (storedQuestionsString) {
-        const storedQuestions: Question[] = JSON.parse(storedQuestionsString);
-
-        const answeredQuestionIndex = storedQuestions.findIndex(
-          (q) => q.question === answeredQuestion.question
-        );
-
-        if (answeredQuestionIndex !== -1) {
-          const updatedQuestions = [
-            ...storedQuestions.slice(0, answeredQuestionIndex),
-            ...storedQuestions.slice(answeredQuestionIndex + 1),
-          ];
-
-          sessionStorage.setItem("questions", JSON.stringify(updatedQuestions));
-
-          setQuestionObj(updatedQuestions[answeredQuestionIndex]);
-        }
-      }
-      setAnsweredQuestions((prevAnsweredQuestions) => [...prevAnsweredQuestions, answeredQuestion]);
-    }
-  };
-
-  return (
-    <div className={styles['answer-question']}>
-      {questionObj && (
-        <>
-          <h2>{questionObj.question}</h2>
-          <div className={styles['btn-group']}>
-            <button onClick={() => handleAnswerClick(questionObj.answers[0])}>
-              {questionObj.answers[0]}
-            </button>
-            <button onClick={() => handleAnswerClick(questionObj.answers[1])}>
-              {questionObj.answers[1]}
-            </button>
-          </div>
-        </>
-      )}
-    </div>
-  );
-};
-
-export default AnswerQuestions;
- */

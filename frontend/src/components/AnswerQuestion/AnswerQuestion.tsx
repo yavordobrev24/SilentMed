@@ -17,33 +17,17 @@ const Q1_THRESHOLD = 0;
 
 const AnswerQuestions = () => {
   const [questionObj, setQuestionObj] = useState<Question | null>(null);
-  const [answeredQuestions, setAnsweredQuestions] = useState<
-    AnsweredQuestion[]
-  >([]);
   const navigate = useNavigate();
 
-  // Refs for the answer buttons
   const leftButtonRef = useRef<HTMLButtonElement>(null);
   const rightButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
-    const storedQuestionsString = sessionStorage.getItem("questions");
-
-    if (storedQuestionsString) {
-      const storedQuestions: Question[] = JSON.parse(storedQuestionsString);
-
-      if (storedQuestions.length > 0) {
-        setQuestionObj(storedQuestions[0]);
-      } else {
-        sessionStorage.removeItem("questions");
-        sessionStorage.setItem(
-          "answeredQuestions",
-          JSON.stringify(answeredQuestions)
-        );
-        navigate("/answer-summary");
-      }
+    const questionString = sessionStorage.getItem("question");
+    if (questionString) {
+      const questionParsed: Question = JSON.parse(questionString);
+      setQuestionObj(questionParsed);
     }
-
     const fetchData = async () => {
       try {
         const response = await fetch(file);
@@ -55,93 +39,85 @@ const AnswerQuestions = () => {
 
         if (Q1 < Q1_THRESHOLD) {
           console.log("Right");
-          // Hover over the right button
           rightButtonRef.current?.classList.add(styles.hovered);
           leftButtonRef.current?.classList.remove(styles.hovered);
-          // Set a timeout to click the button after 2 seconds
+
           setTimeout(() => {
-            //   rightButtonRef.current?.click();
-          }, 3000);
+            rightButtonRef.current?.click();
+          }, 4000);
         } else {
           console.log("Left");
-          // Hover over the left button
           leftButtonRef.current?.classList.add(styles.hovered);
           rightButtonRef.current?.classList.remove(styles.hovered);
-          // Set a timeout to click the button after 2 seconds
           setTimeout(() => {
-            //   leftButtonRef.current?.click();
-          }, 3000);
+            leftButtonRef.current?.click();
+          }, 4000);
         }
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
 
-    // Fetch data initially
     fetchData();
-
-    // Schedule subsequent requests every 1 second
     const fetchDataInterval = setInterval(fetchData, 1000);
 
     return () => {
-      // Clear the interval when the component is unmounted
       clearInterval(fetchDataInterval);
     };
-  }, [answeredQuestions, navigate]);
+  }, [setQuestionObj, navigate]);
 
-  const handleAnswerClick = (selectedAnswer: string) => {
+  const handleAnswerClick = (e: any) => {
     if (questionObj) {
       const answeredQuestion: AnsweredQuestion = {
         question: questionObj.question,
-        answer: selectedAnswer,
+        answer: e.target.textContent,
       };
-      const storedQuestionsString = sessionStorage.getItem("questions");
-      if (storedQuestionsString) {
-        const storedQuestions: Question[] = JSON.parse(storedQuestionsString);
 
-        const answeredQuestionIndex = storedQuestions.findIndex(
-          (q) => q.question === answeredQuestion.question
+      const answeredQuestionsString: string | null =
+        sessionStorage.getItem("answeredQuestions");
+      if (answeredQuestionsString) {
+        const answeredQuestionsParsed = JSON.parse(answeredQuestionsString);
+
+        answeredQuestionsParsed.push(answeredQuestion);
+        sessionStorage.setItem(
+          "answeredQuestions",
+          JSON.stringify(answeredQuestionsParsed)
         );
-
-        if (answeredQuestionIndex !== -1) {
-          const updatedQuestions = [
-            ...storedQuestions.slice(0, answeredQuestionIndex),
-            ...storedQuestions.slice(answeredQuestionIndex + 1),
-          ];
-
-          sessionStorage.setItem("questions", JSON.stringify(updatedQuestions));
-
-          setQuestionObj(updatedQuestions[answeredQuestionIndex]);
-        }
+        sessionStorage.removeItem("question");
       }
-      setAnsweredQuestions((prevAnsweredQuestions) => [
-        ...prevAnsweredQuestions,
-        answeredQuestion,
-      ]);
+      setQuestionObj(null);
+      navigate("/create-question");
     }
   };
 
   return (
     <div className={styles["answer-question"]}>
-      {questionObj && (
-        <>
-          <h2>{questionObj.question}</h2>
-          <div className={styles["btn-group"]}>
-            <button
-              ref={leftButtonRef}
-              onClick={() => handleAnswerClick(questionObj.answers[0])}
-            >
-              {questionObj.answers[0]}
-            </button>
-            <button
-              ref={rightButtonRef}
-              onClick={() => handleAnswerClick(questionObj.answers[1])}
-            >
-              {questionObj.answers[1]}
-            </button>
-          </div>
-        </>
-      )}
+      <div className={styles.img}>
+        <img src="/patient.jpg" />
+      </div>
+      <div className={styles.content}>
+        <h2>{questionObj?.question}</h2>
+        <p>
+          Answer the questions with the movement of your head.
+          <span>(right or left)</span>
+        </p>
+        <div className={styles.btns}>
+          <button
+            ref={leftButtonRef}
+            className={styles["as-btn"]}
+            onClick={(e: any) => handleAnswerClick(e)}
+          >
+            {questionObj?.answers[0]}
+          </button>
+          <button
+            ref={rightButtonRef}
+            className={styles["as-btn"]}
+            onClick={(e: any) => handleAnswerClick(e)}
+          >
+            {questionObj?.answers[1]}
+          </button>
+        </div>
+      </div>
     </div>
   );
 };
