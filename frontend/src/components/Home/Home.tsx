@@ -10,7 +10,7 @@ export default function Home() {
   const navigate = useNavigate();
   useEffect(() => {
     sessionStorage.clear();
-  });
+  }, [navigate]);
 
   const handleClick = () => {
     sessionStorage.setItem("answeredQuestions", JSON.stringify([]));
@@ -65,8 +65,8 @@ export default function Home() {
             <h3>2</h3>
             <p>
               To begin creating questions the medical expert should go to
-              <Link to="/create-question"> Create Question </Link> and start
-              asking the patient questions.
+              <a onClick={handleClick}> Create Question </a> and start asking
+              the patient questions.
             </p>
           </div>
           <div className={styles.card}>

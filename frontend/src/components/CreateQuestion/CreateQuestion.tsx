@@ -54,8 +54,6 @@ export default function CreateQuestion(): JSX.Element {
   };
 
   const handleQuestionChange = (e: ChangeEvent<HTMLInputElement>) => {
-    console.log(question);
-
     setQuestion({
       ...question,
       question: e.target.value,
@@ -66,7 +64,6 @@ export default function CreateQuestion(): JSX.Element {
     answerIndex: number,
     e: ChangeEvent<HTMLInputElement>
   ) => {
-    console.log(question);
     const newAnswers = [...question.answers];
     newAnswers[answerIndex] = e.target.value;
     setQuestion({

@@ -13,7 +13,7 @@ interface AnsweredQuestion {
   answer: string;
 }
 
-const Q1_THRESHOLD = 0;
+const Q2_THRESHOLD = 0;
 
 const AnswerQuestions = () => {
   const [questionObj, setQuestionObj] = useState<Question | null>(null);
@@ -35,18 +35,23 @@ const AnswerQuestions = () => {
         const lines = data.split("\n");
         const lastestData = lines[lines.length - 2];
         const parsedData = JSON.parse(lastestData);
-        const Q1 = parsedData.mot[3];
+        //if Q2 doesnt work try Q3 === parsdData.mot[4] and switch to > also change threshold
+        const Q2 = parsedData.mot[3];
+        console.log(parsedData.mot[2]);
+        console.log(parsedData.mot[3]);
+        console.log(parsedData.mot[4]);
+        console.log(parsedData.mot[5]);
 
-        if (Q1 < Q1_THRESHOLD) {
-          console.log("Right");
+        if (Q2 < Q2_THRESHOLD) {
           rightButtonRef.current?.classList.add(styles.hovered);
           leftButtonRef.current?.classList.remove(styles.hovered);
-
+          console.log("Right");
           setTimeout(() => {
             rightButtonRef.current?.click();
           }, 4000);
         } else {
           console.log("Left");
+
           leftButtonRef.current?.classList.add(styles.hovered);
           rightButtonRef.current?.classList.remove(styles.hovered);
           setTimeout(() => {
@@ -54,7 +59,7 @@ const AnswerQuestions = () => {
           }, 4000);
         }
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.log("Error fetching data:", error);
       }
     };
 

@@ -106,6 +106,7 @@
 .how-it-works .cards-wrapper .card a {
   color: rgb(61, 61, 179, 0.8);
   transition: 0.3s ease;
+  cursor: pointer;
 }
 .how-it-works .cards-wrapper .card a:hover {
   color: rgb(61, 61, 179);

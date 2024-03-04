@@ -199,7 +199,7 @@ class Cortex {
     });
   }
 
-  subRequest(stream, authToken, sessionId) {
+  subRequest(stream, authToken, sessionId, filename) {
     let socket = this.socket;
     const SUB_REQUEST_ID = 6;
     let subRequest = {
@@ -216,12 +216,17 @@ class Cortex {
     socket.send(JSON.stringify(subRequest));
     socket.on("message", (data) => {
       try {
-        // if(JSON.parse(data)['id']==SUB_REQUEST_ID){
-        console.log("SUB REQUEST RESULT --------------------------------");
-        // console.log(data.toString("utf8"));
-        //console.log("\r\n");
-        // }
+        if (JSON.parse(data)["id"] == SUB_REQUEST_ID) {
+          console.log("REQ DATA");
+          // console.log(data.toString("utf8"));
+          //console.log("\r\n");
+        }
       } catch (error) {}
+    });
+    socket.on("close", () => {
+      const filePath = path.join(__dirname, `${fileName}.txt`);
+      fs.writeFileSync(filePath, "", { flag: "w" });
+      process.kill();
     });
   }
 
@@ -325,7 +330,7 @@ class Cortex {
       // Specify the file path based on the fileName provided
       const filePath = path.join(__dirname, `${fileName}.txt`);
 
-      this.subRequest(streams, this.authToken, this.sessionId);
+      this.subRequest(streams, this.authToken, this.sessionId, this.fileName);
 
       let lastWriteTime = Date.now();
 
@@ -336,6 +341,7 @@ class Cortex {
             // Truncate the file and write the new data
             fs.writeFileSync(filePath, `${data}\n`, { flag: "w" });
             lastWriteTime = Date.now(); // Update the last write time
+            console.log("DATA");
           } catch (error) {
             console.error("Error writing to file:", error);
           }
@@ -343,7 +349,7 @@ class Cortex {
       });
 
       this.socket.on("close", () => {
-        // No need to close the write stream for writeFileSync
+        console.log("Closing");
       });
     });
   }
