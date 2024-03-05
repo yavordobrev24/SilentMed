@@ -13,10 +13,11 @@ interface AnsweredQuestion {
   answer: string;
 }
 
-const Q2_THRESHOLD = 0;
+const ACCZ_THRESHOLD = 0;
 
 const AnswerQuestions = () => {
   const [questionObj, setQuestionObj] = useState<Question | null>(null);
+  const [side, setSide] = useState<string | null>(null);
   const navigate = useNavigate();
 
   const leftButtonRef = useRef<HTMLButtonElement>(null);
@@ -24,39 +25,41 @@ const AnswerQuestions = () => {
 
   useEffect(() => {
     const questionString = sessionStorage.getItem("question");
+    let count = 0;
     if (questionString) {
       const questionParsed: Question = JSON.parse(questionString);
       setQuestionObj(questionParsed);
     }
     const fetchData = async () => {
+      if (count == 4) {
+        if (side == "right") {
+          rightButtonRef.current?.click();
+          console.log(side, " chosen");
+        } else {
+          leftButtonRef.current?.click();
+          console.log(side, " chosen");
+        }
+      }
       try {
         const response = await fetch(file);
         const data = await response.text();
         const lines = data.split("\n");
         const lastestData = lines[lines.length - 2];
         const parsedData = JSON.parse(lastestData);
-        //if Q2 doesnt work try Q3 === parsdData.mot[4] and switch to > also change threshold
-        const Q2 = parsedData.mot[3];
-        console.log(parsedData.mot[2]);
-        console.log(parsedData.mot[3]);
-        console.log(parsedData.mot[4]);
-        console.log(parsedData.mot[5]);
-
-        if (Q2 < Q2_THRESHOLD) {
+        const ACCZ = parsedData.mot[8];
+        const newSide = ACCZ < ACCZ_THRESHOLD ? "left" : "right";
+        if (side === newSide) {
+          count = count + 1;
+        } else {
+          count = 0;
+          setSide(newSide);
+        }
+        if (side == "right") {
           rightButtonRef.current?.classList.add(styles.hovered);
           leftButtonRef.current?.classList.remove(styles.hovered);
-          console.log("Right");
-          setTimeout(() => {
-            rightButtonRef.current?.click();
-          }, 4000);
         } else {
-          console.log("Left");
-
           leftButtonRef.current?.classList.add(styles.hovered);
           rightButtonRef.current?.classList.remove(styles.hovered);
-          setTimeout(() => {
-            leftButtonRef.current?.click();
-          }, 4000);
         }
       } catch (error) {
         console.log("Error fetching data:", error);
@@ -69,7 +72,7 @@ const AnswerQuestions = () => {
     return () => {
       clearInterval(fetchDataInterval);
     };
-  }, [setQuestionObj, navigate]);
+  }, [setQuestionObj, navigate, side]);
 
   const handleAnswerClick = (e: any) => {
     if (questionObj) {

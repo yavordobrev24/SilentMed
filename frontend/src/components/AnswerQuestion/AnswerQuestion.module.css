@@ -55,5 +55,6 @@
 .answer-question .btns .as-btn:hover,
 .answer-question .btns .as-btn.hovered {
   cursor: pointer;
+  transform: translateY(5px);
   background-color: rgb(50, 50, 158, 0.5);
 }
