@@ -109,6 +109,7 @@ const AnswerQuestions = () => {
           Answer the questions with the movement of your head.
           <span>(right or left)</span>
         </p>
+        <p>Hold 4 seconds to select your answer.</p>
         <div className={styles.btns}>
           <button
             ref={leftButtonRef}

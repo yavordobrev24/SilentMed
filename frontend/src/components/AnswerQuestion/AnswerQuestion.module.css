@@ -11,8 +11,11 @@
 }
 .answer-question p {
   align-self: center;
-  padding: 0em 2em 3em;
+  padding: 0em 2em 1em;
   color: rgb(148, 166, 184);
+}
+.answer-question p:last-of-type {
+  padding-bottom: 3em;
 }
 
 .answer-question .content {
